@@ -1,0 +1,52 @@
+# Esse é um template, as variaveis serão substituidas nos workflows dentro da pasta .github
+
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ${KUB_NAME}-camp
+  namespace: ${NODE_ENV}
+  labels:
+    app: ${KUB_NAME}-camp
+    version: ${IMAGE_TAG}
+    commit: "${GIT_COMMIT}"
+    type: ${PROJECT_TYPE} # --> Preencher api, job, worker ou web
+spec:
+  schedule: ${CRON_SCHEDULE}
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          name: ${KUB_NAME}-camp
+          labels:
+            app: ${KUB_NAME}-camp
+            version: ${IMAGE_TAG}
+            commit: "${GIT_COMMIT}"
+        spec:
+          imagePullSecrets:
+            - name: gcr-json-key
+          containers:
+          - name: ${KUB_NAME}-camp
+            image: ${GCR_IMAGE}
+            imagePullPolicy: IfNotPresent
+            command:
+            - node
+            - run-campaign.js
+            envFrom:
+            - secretRef:
+                name: squid-secrets
+            - configMapRef:
+                name: squid-envs
+            - secretRef:
+                name: ${KUB_NAME}
+            - configMapRef:
+                name: ${KUB_NAME}
+            volumeMounts: # --> Aponta um volume onde fica o credentials.json (para funcionar precisa criar um secret com o credential.json)
+              - mountPath: /pipeline/secret
+                name: credentials
+                readOnly: true
+          restartPolicy: OnFailure
+          volumes: # --> Cria um volume onde fica o credentials.json (para funcionar precisa criar um secret com o credential.json)
+            - name: credentials
+              secret:
+                secretName: ${KUB_PREFIX}-credentials
+                defaultMode: 0644
