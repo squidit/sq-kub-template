@@ -70,7 +70,7 @@ runs:
   using: 'composite'
   steps:
     - name: Check if Deployment or Configmap
-      id: check-if deployment-or-configmap
+      id: check-if-deployment-or-configmap
       run: |-
         echo ${{ inputs.cronjob-configmap }}
         echo ${{ inputs.cronjob-list }}
