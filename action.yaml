@@ -80,7 +80,7 @@ runs:
           echo "Resource is a Cronjob - Ingress and Servie will not be applied"
         fi
         echo "::set-output name=type_resource::$type_resource"
-
+      shell: bash
     # - name: Get current namespace
     #   id: get-original-namespace
     #   run: |
