@@ -69,13 +69,13 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Check if Deployment or Configmap
-      id: check-if-deployment-or-configmap
+    - name: Check if Deployment or Cronjob
+      id: check-if-deployment-or-cronjob
       run: |-
         echo ${{ inputs.cronjob-configmap }}
         echo ${{ inputs.cronjob-list }}
         type_resource="deployment"
-        if [ ${{ inputs.cronjob-configmap }} != "" ] && [ ${{ inputs.cronjob-list }} != "" ]; then
+        if [ "${{ inputs.cronjob-configmap }}" != "" ] && [ "${{ inputs.cronjob-list }}" != "" ]; then
           type_resource="cronjob"
           echo "Resource is a Cronjob - Ingress and Servie will not be applied"
         fi
